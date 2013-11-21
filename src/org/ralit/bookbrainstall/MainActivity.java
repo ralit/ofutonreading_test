@@ -3,6 +3,7 @@ package org.ralit.bookbrainstall;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -557,6 +558,23 @@ public class MainActivity extends Activity implements AnimatorListener, FileOpen
 		bmp.compress(CompressFormat.JPEG, 90, bos);
 		jpegData = bos.toByteArray();
 	}
+
+	private void openImage() {
+		Log.i(tag, "openImage()");
+		options = new BitmapFactory.Options();
+		options.inScaled = false;
+		File file = new File(filepath);
+		try {
+			FileInputStream fis = new FileInputStream(file);
+			bmp = BitmapFactory.decodeStream(fis);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		bmp.compress(CompressFormat.JPEG, 90, bos);
+		jpegData = bos.toByteArray();
+	}
 	
 	public void save_pos(){
 		Log.i(tag, "save_pos()");
@@ -596,7 +614,8 @@ public class MainActivity extends Activity implements AnimatorListener, FileOpen
         }
         ispos = true;
 }
-	
+
+
 	private void docomo () {
 		Log.i(tag, "docomo()");
 		Api api = new Api();
@@ -606,6 +625,10 @@ public class MainActivity extends Activity implements AnimatorListener, FileOpen
 		
 		if (filepath.endsWith(".pdf")) {
 			openPDF();
+		} else if (filepath.endsWith(".jpg")) {
+			openImage();
+		} else if (filepath.endsWith(".zip")) {
+//			openZip();
 		}
 //		openResource();
 		

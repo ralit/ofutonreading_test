@@ -123,6 +123,7 @@ public class MainActivity extends Activity implements AnimatorListener, FileOpen
 	private int index = 0;
 	private byte[] jpegData;
 	private LineLayout[] job;
+
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -138,6 +139,8 @@ public class MainActivity extends Activity implements AnimatorListener, FileOpen
 		Log.i(tag, "onCreateOptionsMenu()");
 		menu.add("蛍光ペン");
 		menu.add("ファイル選択");
+		menu.add("SurfaceView");
+		menu.add("GLSurfaceView");
 		return true;
 	}
 	
@@ -153,6 +156,14 @@ public class MainActivity extends Activity implements AnimatorListener, FileOpen
 		} else if (item.toString() == "ファイル選択") {
 			FileOpenDialog fod = new FileOpenDialog(this, this);
 			fod.openDirectory(Environment.getExternalStorageDirectory().getAbsolutePath() + "/imagemove");
+		} else if (item.toString() == "SurfaceView") {
+			Intent intent = new Intent(getApplicationContext(), SurfaceViewActivity.class);
+			startActivityForResult(intent, 2);
+			overridePendingTransition(com.artifex.mupdfdemo.R.animator.in_lower_right, com.artifex.mupdfdemo.R.animator.out_upper_left);
+		} else if (item.toString() == "GLSurfaceView") {
+			Intent intent = new Intent(getApplicationContext(), GLSurfaceActivity.class);
+			startActivityForResult(intent, 2);
+			overridePendingTransition(com.artifex.mupdfdemo.R.animator.in_lower_right, com.artifex.mupdfdemo.R.animator.out_upper_left);
 		}
 		return false;
 	}
@@ -489,6 +500,8 @@ public class MainActivity extends Activity implements AnimatorListener, FileOpen
 		select.setScaleY(textZoom);
 		select.setX(dW * textZoom / (float)2);
 		select.setY(0);
+		Log.i(tag, "setimage()" + pos.get(index));
+		Log.i(tag, "setimage()" + textZoom);
 	}
 	
 	private void setimage2() {

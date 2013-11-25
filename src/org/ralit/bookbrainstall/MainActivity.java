@@ -28,9 +28,6 @@ import jp.recognize.common.client.HttpSceneryRecognitionRequest.InputStreamImage
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.opencv.android.BaseLoaderCallback;
-import org.opencv.android.LoaderCallbackInterface;
-import org.opencv.android.OpenCVLoader;
 
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
@@ -117,6 +114,7 @@ public class MainActivity extends Activity implements AnimatorListener, FileOpen
 	private float margin;
 	private String filepath;
 	private String filename;
+	private String filepath_for_docomo;
 	
 	private String RECOGNITION_URL = "https://recognize.jp/v1/scenery/api/line-region";
 	private String ANALYSIS = "standard";
@@ -560,6 +558,7 @@ public class MainActivity extends Activity implements AnimatorListener, FileOpen
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			bmp.compress(CompressFormat.JPEG, 90, bos);
 			jpegData = bos.toByteArray();
+			save_image_for_docomo(bmp, 80);
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
@@ -573,6 +572,7 @@ public class MainActivity extends Activity implements AnimatorListener, FileOpen
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		bmp.compress(CompressFormat.JPEG, 90, bos);
 		jpegData = bos.toByteArray();
+		save_image_for_docomo(bmp, 80);
 	}
 
 	private void openImage() {
@@ -590,6 +590,7 @@ public class MainActivity extends Activity implements AnimatorListener, FileOpen
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		bmp.compress(CompressFormat.JPEG, 90, bos);
 		jpegData = bos.toByteArray();
+		save_image_for_docomo(bmp, 80);
 	}
 	
 	public void save_pos(){
@@ -682,7 +683,7 @@ public class MainActivity extends Activity implements AnimatorListener, FileOpen
 		}
 //		openResource();
 		
-		load_pos();
+//		load_pos();
 		if (ispos) { return; }
 		
 		try {
@@ -698,7 +699,7 @@ public class MainActivity extends Activity implements AnimatorListener, FileOpen
 			e.printStackTrace();
 		}
 	}
-
+	
 	private void setPosition() {
 		Log.i(tag, "setPosition()");
 		for (LineLayout line : job) {
@@ -781,6 +782,29 @@ public class MainActivity extends Activity implements AnimatorListener, FileOpen
 		}
 	}
 	
+	private void save_image_for_docomo(Bitmap bmp, int compress) {
+		Log.i(tag, "save_image_for_docomo()");
+		File file = new File(Environment.getExternalStorageDirectory().getPath() + "/imagemove/send_to_docomo/");
+		try {
+			if (!file.exists()) { file.mkdir(); }
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		}
+		String attachName = file.getAbsolutePath() + "/" + "tmp.jpg";
+		filepath_for_docomo = attachName;
+		try {
+			FileOutputStream out = new FileOutputStream(attachName);
+			bmp.compress(CompressFormat.JPEG, compress, out);
+			out.flush();
+			out.close();
+//			mutableBitmap.recycle();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	private void saveMarkedImage(Bitmap bitmap, String page, Rect rect) {
 		Log.i(tag, "saveMarkedImage()");
 		String dir = Environment.getExternalStorageDirectory().getPath() + "/imagemove/";
@@ -822,6 +846,10 @@ public class MainActivity extends Activity implements AnimatorListener, FileOpen
 		Log.i(tag, "onAnimationStart()");
 		// TODO Auto-generated method stub
 		
+	}
+	
+	private void log(String message) {
+		Log.i(tag, message);
 	}
 }
 

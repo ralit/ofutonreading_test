@@ -87,7 +87,7 @@ class GLSurfaceViewRenderer implements GLSurfaceView.Renderer {
 	public void onDrawFrame(GL10 gl) {
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 		img.draw(gl, i);
-		i = i + 2;
+		i = i + 4;
 		if(i > 1024) { i = 0; }
 	}
 
@@ -144,16 +144,14 @@ class Img {
 	public void setTexture(GL10 gl, Resources res, int id) {
 		
 		Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), com.artifex.mupdfdemo.R.drawable.one_line);
-		bitmap.getHeight();
-		bitmap.getWidth();
 		int width_2 = 2;
 		while(bitmap.getWidth() <= width_2) { width_2 *= 2; }
 		int height_2 = 2;
 		while(bitmap.getHeight() <= height_2) { height_2 *= 2; }
-		Bitmap bitmap2 = Bitmap.createBitmap(width_2, height_2, Config.ARGB_8888);
-		Canvas canvas = new Canvas(bitmap);
+		Bitmap square_bitmap = Bitmap.createBitmap(width_2, height_2, Config.ARGB_8888);
+		Canvas canvas = new Canvas(square_bitmap);
 		Paint paint = new Paint();
-		canvas.drawBitmap(bitmap2, 0, 0, paint);
+		canvas.drawBitmap(bitmap, 0, 0, paint);
 		
 //		Bitmap bitmap = BitmapFactory.decodeResource(res, id);
 		gl.glEnable(GL10.GL_ALPHA_TEST);
@@ -185,23 +183,26 @@ class Img {
 		Log.i(tag, "bitmap.getWidth()" + bitmap.getWidth());
 		height    = bitmap.getHeight();
 		Log.i(tag, "bitmap.getHeight()" + bitmap.getHeight());
+		
+		//テクスチャ0番をアクティブにする
+		gl.glActiveTexture(GL10.GL_TEXTURE0);
+		//テクスチャIDに対応するテクスチャをバインドする
+		gl.glBindTexture(GL10.GL_TEXTURE_2D, textureNo);
+		//テクスチャの座標と幅と高さを指定
+		int rect[] = { texX,  texY,  texWidth, texHeight};
+//		int rect[] = { texX,  texY,  1200, -1600};
+		//テクスチャ画像のどの部分を使うかを指定
+		((GL11) gl).glTexParameteriv(GL10.GL_TEXTURE_2D,GL11Ext.GL_TEXTURE_CROP_RECT_OES, rect, 0);
+		
 	}
 
 	public void draw(GL10 gl, int i) {
 		gl.glDisable(GL10.GL_DEPTH_TEST);
 		//背景色を白色で塗りつぶし
 		gl.glColor4x(0x10000, 0x10000, 0x10000, 0x10000);
-		//テクスチャ0番をアクティブにする
-		gl.glActiveTexture(GL10.GL_TEXTURE0);
-		//テクスチャIDに対応するテクスチャをバインドする
-		gl.glBindTexture(GL10.GL_TEXTURE_2D, textureNo);
-		//テクスチャの座標と幅と高さを指定
-//		int rect[] = { texX,  texY,  texWidth, texHeight};
-		int rect[] = { texX,  texY,  1200, -1600};
-		//テクスチャ画像のどの部分を使うかを指定
-		((GL11) gl).glTexParameteriv(GL10.GL_TEXTURE_2D,GL11Ext.GL_TEXTURE_CROP_RECT_OES, rect, 0);
+
 		//描画
-		((GL11Ext) gl).glDrawTexfOES( pos_x - i, pos_y, pos_z, 600, 800);
+		((GL11Ext) gl).glDrawTexfOES( pos_x - i, pos_y, pos_z, width*5, height*5);
 		gl.glEnable(GL10.GL_DEPTH_TEST);
 	}
 	
